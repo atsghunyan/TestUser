@@ -21,7 +21,10 @@ public interface UserDAO {
     public void deleteById(long id);
 
     //Get All Users
-    public List<User> getAll();
+    public List<User> getAll(long i);
+
+    //Get All Users
+    public long getCount();
 
     //Get Missing Records
     //public List<User> getMissings();

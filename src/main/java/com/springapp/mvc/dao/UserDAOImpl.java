@@ -95,8 +95,8 @@ public class UserDAOImpl implements UserDAO {
 
     //Get All Users List
     @Override
-    public List<User> getAll() {
-        String query = "select id, name, created_date, modified_date from TestUser";
+    public List<User> getAll(long i) {
+        String query = "SELECT * FROM TestUser LIMIT 6 OFFSET "+String.valueOf((i-1)*6);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         List<User> userList = new ArrayList<User>();
 
@@ -112,6 +112,14 @@ public class UserDAOImpl implements UserDAO {
             userList.add(user);
         }
         return userList;
+    }
+
+    //  Create a User
+    @Override
+    public long getCount() {
+        String query = "select count(*) from TestUser";
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        return jdbcTemplate.queryForObject(query, Long.class);
     }
 
 
