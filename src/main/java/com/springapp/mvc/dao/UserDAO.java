@@ -26,6 +26,7 @@ public interface UserDAO {
     //Get All Users
     public long getCount();
 
-    //Get Missing Records
-    //public List<User> getMissings();
+    // Get Missing records
+    public String getMissings();
+
 }

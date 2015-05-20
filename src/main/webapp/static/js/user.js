@@ -1,7 +1,7 @@
 $(function() {
     $("#paginate").pagination({
         items: $("#itemCount").val() ,
-        itemsOnPage: 2,
+        itemsOnPage: 3,
         displayedPages: 5,
         cssStyle: 'light-theme',
         currentPage: 1,

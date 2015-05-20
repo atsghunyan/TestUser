@@ -37,24 +37,28 @@ public class UserController {
     }
 
 
+    // Onload Page
     @RequestMapping(value ={"/getAllUsers", "/"}, method = RequestMethod.GET)
     public ModelAndView getAllUsers() {
         long count = userDAO.getCount();
         return new ModelAndView("ViewList", "itemCount", count);
     }
 
+    // Ajax Pagination
     @RequestMapping(value = "/getAll/{val}", method = {RequestMethod.POST})
     public @ResponseBody  List<User> getAllUserss( @PathVariable long val) {
         List<User> userList = userDAO.getAll(val);
         return userList;
     }
 
+    // Create User
     @RequestMapping(value = "createUser", method = RequestMethod.GET)
     public ModelAndView createUser(@ModelAttribute User user) {
 
         return new ModelAndView("createForm");
     }
 
+    // Edit User
     @RequestMapping(value = "/editUser/{id}", method = RequestMethod.GET)
     public ModelAndView editUser(@PathVariable  long id, @ModelAttribute User user) {
 
@@ -63,6 +67,7 @@ public class UserController {
 
     }
 
+    // Save User
     @RequestMapping("saveUser")
     public ModelAndView saveUser(@ModelAttribute User user) {
         if(user.getId() == 0){ // if User id is 0 then creating the user other updating the user
@@ -76,9 +81,18 @@ public class UserController {
         return new ModelAndView("redirect:getAllUsers");
     }
 
+    // Deleted selected User
     @RequestMapping("deleteUser")
     public ModelAndView deleteUser(@RequestParam long id) {
         userDAO.deleteById(id);
         return new ModelAndView("redirect:getAllUsers");
+    }
+
+    // Missing Records
+    @RequestMapping(value = "showMissings", method = RequestMethod.GET)
+    public ModelAndView showMissings( @ModelAttribute String str) {
+
+        return new ModelAndView("missingForm", "message", userDAO.getMissings());
+
     }
 }

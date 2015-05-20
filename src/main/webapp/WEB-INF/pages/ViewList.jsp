@@ -38,6 +38,7 @@ pageEncoding="UTF-8" %>
             <h3 class="panel-title">
 
                 <a href="createUser"  data-toggle="modal" data-target="#detailForm"><b>Add User</b></a>
+                <a href="showMissings"  data-toggle="modal" data-target="#detailForm"><b>&nbsp;&nbsp;&nbsp;&nbsp;Missing Records</b></a>
 
             </h3>
         </div>

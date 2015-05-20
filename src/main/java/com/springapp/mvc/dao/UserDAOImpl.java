@@ -25,13 +25,13 @@ public class UserDAOImpl implements UserDAO {
     private final String TableName = "TestUser";
 
     //itemsOnPage
-    public int itemsOnPage = 2;
-
+    public int itemsOnPage = 3;
 
     private DataSource dataSource;
     public void setDataSource(DataSource dataSource){
         this.dataSource = dataSource;
     }
+
 
     //  Create a User
     @Override
@@ -39,15 +39,10 @@ public class UserDAOImpl implements UserDAO {
         String query = "insert into "+TableName+" (id, name,created_date, modified_date) values (?,?,?,?)";
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-
         Object[] args = new Object[] {user.getId(), user.getName(), user.getCreatedDate(), user.getModifiedDate()};
-
         int out = jdbcTemplate.update(query, args);
-
-        if(out !=0){
-            System.out.println("User saved with id="+user.getId());
-        }else System.out.println("User save failed with id="+user.getId());
     }
+
 
     //  Get User by ID
     @Override
@@ -66,12 +61,11 @@ public class UserDAOImpl implements UserDAO {
                 emp.setName(rs.getString("name"));
                 emp.setCreatedDate(rs.getDate("created_date"));
                 emp.setModifiedDate(rs.getDate("modified_date"));
-
                 return emp;
             }});
-
         return emp;
     }
+
 
     // Update User
     @Override
@@ -81,10 +75,8 @@ public class UserDAOImpl implements UserDAO {
         Object[] args = new Object[] {user.getName(), user.getCreatedDate(), user.getModifiedDate(), user.getId()};
 
         int out = jdbcTemplate.update(query, args);
-        if(out !=0){
-            System.out.println("User updated with id="+user.getId());
-        }else System.out.println("No User found with id="+user.getId());
     }
+
 
     // Delete User by ID
     @Override
@@ -94,9 +86,7 @@ public class UserDAOImpl implements UserDAO {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
         int out = jdbcTemplate.update(query, id);
-        if(out !=0){
-            System.out.println("User deleted with id="+id);
-        }else System.out.println("No User found with id="+id);
+
     }
 
 
@@ -121,7 +111,8 @@ public class UserDAOImpl implements UserDAO {
         return userList;
     }
 
-    //  Create a User
+
+    //  Get Records count
     @Override
     public long getCount() {
         String query = "select count(*) from " + TableName;
@@ -129,5 +120,38 @@ public class UserDAOImpl implements UserDAO {
         return jdbcTemplate.queryForObject(query, Long.class);
     }
 
+
+    //  Get missing records
+    @Override
+    public String getMissings() {
+        String query = "SELECT a.id+1 AS start, MIN(b.id) - 1 AS end\n" +
+                "    FROM testuser AS a, testuser AS b\n" +
+                "    WHERE a.id < b.id\n" +
+                "    GROUP BY a.id\n" +
+                "    HAVING start < MIN(b.id)";
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        List<User> userList = new ArrayList<User>();
+        List<Long> miss = new ArrayList<Long>();
+
+        List<Map<String, Object>> userRows = jdbcTemplate.queryForList(query);
+
+        for (Map<String, Object> userRow : userRows) {
+            Long ln;
+            User user = new User();
+            user.setId(Long.parseLong(String.valueOf(userRow.get("start"))));
+            ln = user.getId();
+            miss.add(ln);
+        }
+        if (miss.size() < 1) {
+            return "There are no missing Records";
+        } else {
+            StringBuffer stb = new StringBuffer();
+            for (Long number : miss) {
+                stb.append(number);
+                stb.append(',');
+            }
+            return stb.toString();
+        }
+    }
 
 }
