@@ -13,25 +13,31 @@ pageEncoding="UTF-8" %>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Users List</title>
     <!-- Bootstrap CSS -->
+
     <link href="<c:url value="/static/css/simplePagination.css" />" rel="stylesheet">
     <link href="<c:url value="/static/css/bootstrap.css" />" rel="stylesheet">
     <script type="text/javascript" src="/static/js/jquery-2.1.3.js"></script>
     <script type="text/javascript" src="/static/js/jquery.simplePagination.js"></script>
     <script type="text/javascript" src="/static/js/user.js"></script>
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <style type="text/css">
-        .myrow-container {
+
+        .bs-example{
             margin: 20px;
         }
     </style>
+
 </head>
 <body class=".container-fluid">
 <div class="container myrow-container">
     <div class="panel panel-success">
         <div class="panel-heading">
             <h3 class="panel-title">
-                <div align="left"><b>Users List</b> </div>
-                <div align="right"><a href="createUser">Add New User</a></div>
+
+                <a href="createUser"  data-toggle="modal" data-target="#detailForm"><b>Add User</b></a>
 
             </h3>
         </div>
@@ -47,12 +53,10 @@ pageEncoding="UTF-8" %>
                         <th>Name</th>
                         <th>Created Date</th>
                         <th>Modified Date</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
+                        <th>Edit/Delete</th>
                     </tr>
                     </thead>
                     <tbody id ="mytbody" >
-
                     </tbody>
                 </table>
                 <div class="pagination" id="paginate"  >
@@ -63,6 +67,16 @@ pageEncoding="UTF-8" %>
     </div>
 </div>
 
+<div class="bs-example">
+    <!-- Modal HTML -->
+    <div class="modal fade" id="detailForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

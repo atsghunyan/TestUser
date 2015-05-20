@@ -21,6 +21,13 @@ import org.springframework.jdbc.core.RowMapper;
 
 public class UserDAOImpl implements UserDAO {
 
+    // Table Name
+    private final String TableName = "TestUser";
+
+    //itemsOnPage
+    public int itemsOnPage = 2;
+
+
     private DataSource dataSource;
     public void setDataSource(DataSource dataSource){
         this.dataSource = dataSource;
@@ -29,7 +36,7 @@ public class UserDAOImpl implements UserDAO {
     //  Create a User
     @Override
     public void create(User user) {
-        String query = "insert into TestUser (id, name,created_date, modified_date) values (?,?,?,?)";
+        String query = "insert into "+TableName+" (id, name,created_date, modified_date) values (?,?,?,?)";
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
@@ -45,7 +52,7 @@ public class UserDAOImpl implements UserDAO {
     //  Get User by ID
     @Override
     public User getById(long id) {
-        String query = "select id, name, created_date, modified_date from TestUser where id = ?";
+        String query = "select id, name, created_date, modified_date from "+TableName+" where id = ?";
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
         //using  anonymous class RowMapper
@@ -69,21 +76,21 @@ public class UserDAOImpl implements UserDAO {
     // Update User
     @Override
     public void update(User user) {
-        String query = "update TestUser set name=?, created_date=?, modified_date=? where id=?";
+        String query = "update "+TableName+" set name=?, created_date=?, modified_date=? where id=?";
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         Object[] args = new Object[] {user.getName(), user.getCreatedDate(), user.getModifiedDate(), user.getId()};
 
         int out = jdbcTemplate.update(query, args);
         if(out !=0){
-            System.out.println("Employee updated with id="+user.getId());
-        }else System.out.println("No Employee found with id="+user.getId());
+            System.out.println("User updated with id="+user.getId());
+        }else System.out.println("No User found with id="+user.getId());
     }
 
     // Delete User by ID
     @Override
     public void deleteById(long id) {
 
-        String query = "delete from TestUser where id=?";
+        String query = "delete from "+TableName+" where id=?";
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
         int out = jdbcTemplate.update(query, id);
@@ -96,7 +103,7 @@ public class UserDAOImpl implements UserDAO {
     //Get All Users List
     @Override
     public List<User> getAll(long i) {
-        String query = "SELECT * FROM TestUser LIMIT 6 OFFSET "+String.valueOf((i-1)*6);
+        String query = "SELECT * FROM "+TableName+" LIMIT "+String.valueOf(itemsOnPage) +" OFFSET "+String.valueOf((i-1)*itemsOnPage);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         List<User> userList = new ArrayList<User>();
 
@@ -117,7 +124,7 @@ public class UserDAOImpl implements UserDAO {
     //  Create a User
     @Override
     public long getCount() {
-        String query = "select count(*) from TestUser";
+        String query = "select count(*) from " + TableName;
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         return jdbcTemplate.queryForObject(query, Long.class);
     }
