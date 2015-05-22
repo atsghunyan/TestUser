@@ -90,8 +90,7 @@ public class UserController {
 
     // Missing Records
     @RequestMapping(value = "showMissings", method = RequestMethod.GET)
-    public ModelAndView showMissings( @ModelAttribute String str) {
-
+    public ModelAndView showMissings() {
         return new ModelAndView("missingForm", "message", userDAO.getMissings());
 
     }

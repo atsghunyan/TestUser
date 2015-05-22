@@ -31,7 +31,10 @@
 
 
         <div class="panel-body">
-            <h1>${message}</h1>
+            <div class="modal-body">
+
+                <textarea class="form-control" >${message}</textarea>
+            </div>
         </div>
     </div>
 

@@ -68,7 +68,7 @@
                         <div class="col-xs-4">
                         </div>
                         <div class="col-xs-6">
-                            <input type="submit" id="saveUser" class="btn btn-primary" value="Edit" onclick="return submitUserForm();"/>
+                            <input type="submit" id="saveUser" class="btn btn-primary" value="Save" onclick="return submitUserForm();"/>
                             <a class="btn btn-primary" href="deleteUser?id=${userObject.id}"><b> Delete </b></a>
                             <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
                         </div>

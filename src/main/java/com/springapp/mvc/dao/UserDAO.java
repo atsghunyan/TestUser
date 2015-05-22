@@ -26,6 +26,9 @@ public interface UserDAO {
     //Get All Users
     public long getCount();
 
+    // checking ID exists or not)
+    public long isExists(long id );
+
     // Get Missing records
     public String getMissings();
 

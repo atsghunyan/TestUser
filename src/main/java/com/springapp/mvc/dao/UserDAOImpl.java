@@ -124,34 +124,65 @@ public class UserDAOImpl implements UserDAO {
     //  Get missing records
     @Override
     public String getMissings() {
-        String query = "SELECT a.id+1 AS start, MIN(b.id) - 1 AS end\n" +
-                "    FROM testuser AS a, testuser AS b\n" +
-                "    WHERE a.id < b.id\n" +
-                "    GROUP BY a.id\n" +
-                "    HAVING start < MIN(b.id)";
+
+        // if table is empty return "There are no missing Records";
+        if(getCount() == 0){
+            return "There are no missing Records";
+        }
+
+        String query = "select start, stop from (\n" +
+                "  select m.id + 1 as start,\n" +
+                "    (select min(id) - 1 from "+TableName+" as x where x.id > m.id) as stop\n" +
+                "  from "+TableName+" as m\n" +
+                "    left outer join "+TableName+" as r on m.id = r.id - 1\n" +
+                "  where r.id is null\n" +
+                ") as x\n" +
+                "where stop is not null;";
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        List<User> userList = new ArrayList<User>();
-        List<Long> miss = new ArrayList<Long>();
+        List<Long> start = new ArrayList<Long>();
+        List<Long> stop = new ArrayList<Long>();
 
         List<Map<String, Object>> userRows = jdbcTemplate.queryForList(query);
 
         for (Map<String, Object> userRow : userRows) {
-            Long ln;
-            User user = new User();
-            user.setId(Long.parseLong(String.valueOf(userRow.get("start"))));
-            ln = user.getId();
-            miss.add(ln);
+            start.add(Long.parseLong(String.valueOf(userRow.get("start"))));
+            stop.add(Long.parseLong(String.valueOf(userRow.get("stop"))));
         }
-        if (miss.size() < 1) {
-            return "There are no missing Records";
-        } else {
-            StringBuffer stb = new StringBuffer();
-            for (Long number : miss) {
-                stb.append(number);
-                stb.append(',');
+
+        // The query above finds missing records IDs intervals between existing real number sequence
+        // and will not find the first/last N missing records.
+
+        // Checking and finding first N missing records
+        StringBuilder stb = new StringBuilder();
+        long n = 1;
+        while (isExists(n) == 0){
+            stb.append(n);
+            stb.append(',');
+            ++n;
+        }
+        // if no missing in sequence
+        if(start.size() == 0 ){
+            if(isExists(1) == 1){
+                return "There are no missing Records";
             }
             return stb.toString();
         }
+
+        // if there are missing records in sequence
+        for(int i = 0; i<start.size(); i++){
+            for(long j = start.get(i); j <= stop.get(i); j++  ){
+                stb.append(j);
+                stb.append(',');
+            }
+        }
+        return stb.toString();
+    }
+
+    // checking ID exists or not)
+    public long isExists(long id ){
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        Long ID = jdbcTemplate.queryForObject("SELECT count(*) FROM " + TableName + " WHERE ID = ?", new Object[]{id}, Long.class);
+        return ID;
     }
 
 }
