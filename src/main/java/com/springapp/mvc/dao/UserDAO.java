@@ -12,24 +12,23 @@ public interface UserDAO {
     public void create(User user);
 
     //Get User by ID
-    public User getById(long id);
+    public User getById(int id);
 
     //Update User
     public void update(User user);
 
     //Delete User by ID
-    public void deleteById(long id);
+    public void deleteById(int id);
 
     //Get All Users
-    public List<User> getAll(long i);
+    public List<User> getAll(int i);
 
-    //Get All Users
-    public long getCount();
-
-    // checking ID exists or not)
-    public long isExists(long id );
+    //Get Total Users Count
+    public int getCount();
 
     // Get Missing records
     public String getMissings();
+
+
 
 }

@@ -60,9 +60,11 @@ pageEncoding="UTF-8" %>
                     <tbody id ="mytbody" >
                     </tbody>
                 </table>
+
                 <div class="pagination" id="paginate"  >
                      <input type="hidden" id="itemCount" value="${itemCount}">
                 </div>
+
             </c:if>
         </div>
     </div>

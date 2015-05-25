@@ -6,47 +6,97 @@ package com.springapp.mvc.dao;
 
 import com.springapp.mvc.model.User;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 
 public class UserDAOImpl implements UserDAO {
 
-    // Table Name
-    private final String TableName = "TestUser";
-
-    //itemsOnPage
-    public int itemsOnPage = 3;
-
+    // Datasource
     private DataSource dataSource;
     public void setDataSource(DataSource dataSource){
         this.dataSource = dataSource;
     }
+
+    //Items On Page Default = 3
+    public int itemsOnPage = 3;
+
+    // Table Name
+    public static String TableName = getPropValues()  ;
+
+    // Getting Table Name from "database.properties"  file and Creating Table if not exists
+    public static String getPropValues()  {
+        Properties prop = new Properties();
+        InputStream inputStream = null;
+        try {
+            String propFileName = "database.properties";
+            inputStream = UserDAOImpl.class.getClassLoader().getResourceAsStream(propFileName);
+
+            if (inputStream != null) {
+                prop.load(inputStream);
+            } else {
+                throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
+            }
+            // Create Table if not exists  - SingleConnection
+            SingleConnectionDataSource ds = new SingleConnectionDataSource();
+
+            ds.setDriverClassName(prop.getProperty("database.driverClass"));
+            ds.setUrl(prop.getProperty("database.url"));
+            ds.setUsername(prop.getProperty("database.username"));
+            ds.setPassword(prop.getProperty("database.password"));
+            JdbcTemplate jt = new JdbcTemplate(ds);
+            String TN = prop.getProperty("TableName");
+            jt.execute("CREATE TABLE if not exists "+TN+"(\n" +
+                    "    \n" +
+                    "\tid INT NOT NULL auto_increment, \n" +
+                    "    \n" +
+                    "\tname VARCHAR(50) NOT NULL,\n" +
+                    "    \n" +
+                    "\tcreated_date DATE NOT NULL,\n" +
+                    "    \n" +
+                    "\tmodified_date DATE NOT NULL,\n" +
+                    "    \n" +
+                    "\tPRIMARY KEY (id)\n" +
+                    "\n" +
+                    ");");
+            ds.destroy();
+
+            // get Table Name
+            return prop.getProperty("TableName");
+        }catch (IOException ex) {
+            ex.printStackTrace();
+            return "TestUser";
+        }
+    }
+
 
 
     //  Create a User
     @Override
     public void create(User user) {
         String query = "insert into "+TableName+" (id, name,created_date, modified_date) values (?,?,?,?)";
-
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         Object[] args = new Object[] {user.getId(), user.getName(), user.getCreatedDate(), user.getModifiedDate()};
         int out = jdbcTemplate.update(query, args);
     }
 
 
+
     //  Get User by ID
     @Override
-    public User getById(long id) {
+    public User getById(int id) {
         String query = "select id, name, created_date, modified_date from "+TableName+" where id = ?";
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
@@ -67,32 +117,30 @@ public class UserDAOImpl implements UserDAO {
     }
 
 
+
     // Update User
     @Override
     public void update(User user) {
         String query = "update "+TableName+" set name=?, created_date=?, modified_date=? where id=?";
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         Object[] args = new Object[] {user.getName(), user.getCreatedDate(), user.getModifiedDate(), user.getId()};
-
         int out = jdbcTemplate.update(query, args);
     }
 
 
     // Delete User by ID
     @Override
-    public void deleteById(long id) {
+    public void deleteById(int id) {
 
         String query = "delete from "+TableName+" where id=?";
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-
         int out = jdbcTemplate.update(query, id);
 
     }
 
-
     //Get All Users List
     @Override
-    public List<User> getAll(long i) {
+    public List<User> getAll(int i) {
         String query = "SELECT * FROM "+TableName+" LIMIT "+String.valueOf(itemsOnPage) +" OFFSET "+String.valueOf((i-1)*itemsOnPage);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         List<User> userList = new ArrayList<User>();
@@ -101,7 +149,7 @@ public class UserDAOImpl implements UserDAO {
 
         for(Map<String,Object> userRow : userRows){
             User user = new User();
-            user.setId(Long.parseLong(String.valueOf(userRow.get("id"))));
+            user.setId(Integer.parseInt(String.valueOf(userRow.get("id"))));
             user.setName(String.valueOf(userRow.get("name")));
             user.setCreatedDate(Date.valueOf(String.valueOf(userRow.get("created_date"))));
             user.setModifiedDate(Date.valueOf(String.valueOf(userRow.get("modified_date"))));
@@ -114,10 +162,10 @@ public class UserDAOImpl implements UserDAO {
 
     //  Get Records count
     @Override
-    public long getCount() {
+    public int getCount() {
         String query = "select count(*) from " + TableName;
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        return jdbcTemplate.queryForObject(query, Long.class);
+        return jdbcTemplate.queryForObject(query, Integer.class);
     }
 
 
@@ -139,14 +187,14 @@ public class UserDAOImpl implements UserDAO {
                 ") as x\n" +
                 "where stop is not null;";
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        List<Long> start = new ArrayList<Long>();
-        List<Long> stop = new ArrayList<Long>();
+        List<Integer> start = new ArrayList<Integer>();
+        List<Integer> stop = new ArrayList<Integer>();
 
         List<Map<String, Object>> userRows = jdbcTemplate.queryForList(query);
 
         for (Map<String, Object> userRow : userRows) {
-            start.add(Long.parseLong(String.valueOf(userRow.get("start"))));
-            stop.add(Long.parseLong(String.valueOf(userRow.get("stop"))));
+            start.add(Integer.parseInt(String.valueOf(userRow.get("start"))));
+            stop.add(Integer.parseInt(String.valueOf(userRow.get("stop"))));
         }
 
         // The query above finds missing records IDs intervals between existing real number sequence
@@ -154,7 +202,7 @@ public class UserDAOImpl implements UserDAO {
 
         // Checking and finding first N missing records
         StringBuilder stb = new StringBuilder();
-        long n = 1;
+        int n = 1;
         while (isExists(n) == 0){
             stb.append(n);
             stb.append(',');
@@ -170,7 +218,7 @@ public class UserDAOImpl implements UserDAO {
 
         // if there are missing records in sequence
         for(int i = 0; i<start.size(); i++){
-            for(long j = start.get(i); j <= stop.get(i); j++  ){
+            for(int j = start.get(i); j <= stop.get(i); j++  ){
                 stb.append(j);
                 stb.append(',');
             }
@@ -179,9 +227,9 @@ public class UserDAOImpl implements UserDAO {
     }
 
     // checking ID exists or not)
-    public long isExists(long id ){
+    public int isExists(int id ){
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        Long ID = jdbcTemplate.queryForObject("SELECT count(*) FROM " + TableName + " WHERE ID = ?", new Object[]{id}, Long.class);
+        int ID = jdbcTemplate.queryForObject("SELECT count(*) FROM " + TableName + " WHERE ID = ?", new Object[]{id}, Integer.class);
         return ID;
     }
 

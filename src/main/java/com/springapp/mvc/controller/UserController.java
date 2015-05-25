@@ -3,6 +3,7 @@ package com.springapp.mvc.controller;
 /**
  * Created by Arthur's Notebook on 5/15/2015.
  */
+import com.springapp.mvc.dao.UserDAOImpl;
 import com.springapp.mvc.model.User;
 import com.springapp.mvc.dao.UserDAO;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -40,13 +41,13 @@ public class UserController {
     // Onload Page
     @RequestMapping(value ={"/getAllUsers", "/"}, method = RequestMethod.GET)
     public ModelAndView getAllUsers() {
-        long count = userDAO.getCount();
+        int count = userDAO.getCount();
         return new ModelAndView("ViewList", "itemCount", count);
     }
 
     // Ajax Pagination
     @RequestMapping(value = "/getAll/{val}", method = {RequestMethod.POST})
-    public @ResponseBody  List<User> getAllUserss( @PathVariable long val) {
+    public @ResponseBody  List<User> getAllUserss( @PathVariable int val) {
         List<User> userList = userDAO.getAll(val);
         return userList;
     }
@@ -60,7 +61,7 @@ public class UserController {
 
     // Edit User
     @RequestMapping(value = "/editUser/{id}", method = RequestMethod.GET)
-    public ModelAndView editUser(@PathVariable  long id, @ModelAttribute User user) {
+    public ModelAndView editUser(@PathVariable  int id, @ModelAttribute User user) {
 
         user = userDAO.getById(id);
         return new ModelAndView("editForm", "userObject", user);
@@ -83,7 +84,7 @@ public class UserController {
 
     // Deleted selected User
     @RequestMapping("deleteUser")
-    public ModelAndView deleteUser(@RequestParam long id) {
+    public ModelAndView deleteUser(@RequestParam int id) {
         userDAO.deleteById(id);
         return new ModelAndView("redirect:getAllUsers");
     }

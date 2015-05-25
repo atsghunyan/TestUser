@@ -9,17 +9,17 @@ import java.util.Date;
 
 public class User {
 
-    private long id;
+    private int id;
     private String name;
     private Date createdDate;
     private Date modifiedDate;
 
     // Setters, Getters
     // Set/Get ID
-    public void setId(long id){
+    public void setId(int id){
         this.id = id;
     }
-    public long getId(){
+    public int getId(){
         return id;
     }
 
