@@ -63,6 +63,19 @@ pageEncoding="UTF-8" %>
 
                 <div class="pagination" id="paginate"  >
                      <input type="hidden" id="itemCount" value="${itemCount}">
+                     <input type="hidden" id="itemsOP" >
+                </div>
+                <div class="pa">
+                    <label for="ItOp">Rows on Page</label>
+                    <select name="select" id ="ItOp" >
+                        <option value="" ></option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3" selected>3</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+
+                    </select>
                 </div>
 
             </c:if>
@@ -72,7 +85,7 @@ pageEncoding="UTF-8" %>
 
 <div class="bs-example">
     <!-- Modal HTML -->
-    <div class="modal fade" id="detailForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="detailForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
         <div class="modal-dialog">
             <div class="modal-content">
 

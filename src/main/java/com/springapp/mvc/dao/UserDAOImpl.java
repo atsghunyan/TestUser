@@ -140,7 +140,7 @@ public class UserDAOImpl implements UserDAO {
 
     //Get All Users List
     @Override
-    public List<User> getAll(int i) {
+    public List<User> getAll(int i, int itemsOnPage) {
         String query = "SELECT * FROM "+TableName+" LIMIT "+String.valueOf(itemsOnPage) +" OFFSET "+String.valueOf((i-1)*itemsOnPage);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         List<User> userList = new ArrayList<User>();

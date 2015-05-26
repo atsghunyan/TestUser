@@ -21,7 +21,7 @@ public interface UserDAO {
     public void deleteById(int id);
 
     //Get All Users
-    public List<User> getAll(int i);
+    public List<User> getAll(int i, int j);
 
     //Get Total Users Count
     public int getCount();

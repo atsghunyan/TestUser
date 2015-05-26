@@ -40,7 +40,7 @@ function filTable(page) {
 };
 
 function submitUserForm() {
-    // getting the employee form values
+    // getting the user form values
     var name = $('#name').val().trim();
 
     if(name.length ==0) {
@@ -53,4 +53,46 @@ function submitUserForm() {
 };
 
 
+$(function(){
+
+    $( "#ItOp" ).change(function() {
+        var rn = $("#ItOp").val();
+        var x;
+        $(function() {
+            x = $("#paginate").pagination('getCurrentPage');
+        });
+        $(function() {
+            $("#paginate").pagination('updateItemsOnPage', rn);
+        });
+        //$("#itemsOP").val("rn");
+        //alert(x );
+
+
+        $.ajax({
+            url : '/itemOnPage/'+rn,
+            type : 'POST',
+
+            //dataType : 'json',
+            error : function() {
+                console.log('error');
+            },
+            success : function(success) {
+
+                $(function() {
+                    $("#paginate").pagination('selectPage', 1);
+                });
+                filTable(1);
+
+            }
+        });
+    });
+});
+
+
+$(function() {
+    $("#detailForm").on('hide.bs.modal', function () {
+    // do something…
+        location.reload();
+    });
+});
 

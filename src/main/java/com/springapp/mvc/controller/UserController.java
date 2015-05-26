@@ -29,6 +29,8 @@ public class UserController {
     //Get the UserDAO Bean
     UserDAO userDAO = ctx.getBean("userDAO", UserDAO.class);
 
+    public int itemsOnPage = 3;
+
     //InitBinder in controller for spring to convert date string to java.util.Date object
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -41,6 +43,7 @@ public class UserController {
     // Onload Page
     @RequestMapping(value ={"/getAllUsers", "/"}, method = RequestMethod.GET)
     public ModelAndView getAllUsers() {
+        itemsOnPage = 3;
         int count = userDAO.getCount();
         return new ModelAndView("ViewList", "itemCount", count);
     }
@@ -48,7 +51,7 @@ public class UserController {
     // Ajax Pagination
     @RequestMapping(value = "/getAll/{val}", method = {RequestMethod.POST})
     public @ResponseBody  List<User> getAllUserss( @PathVariable int val) {
-        List<User> userList = userDAO.getAll(val);
+        List<User> userList = userDAO.getAll(val, itemsOnPage);
         return userList;
     }
 
@@ -94,5 +97,12 @@ public class UserController {
     public ModelAndView showMissings() {
         return new ModelAndView("missingForm", "message", userDAO.getMissings());
 
+    }
+
+    // Ajax Pagination
+    @RequestMapping(value = "/itemOnPage/{op}", method = {RequestMethod.POST})
+    public @ResponseBody  String itemsOnPag( @PathVariable int op) {
+        itemsOnPage = op;
+        return "success";
     }
 }
